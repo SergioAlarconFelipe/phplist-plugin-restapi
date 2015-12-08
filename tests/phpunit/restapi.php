@@ -441,6 +441,21 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
         return $subscriberId;
     }
 
+    /** 
+     * Test requesting confirmation
+     *
+     * @depends testSubscriberAdd
+     */
+    public function testRequestConfirmation($subscriberId)
+    {
+        $params = array(
+            'subscriberId' => $subscriberId,
+            'subscribePage' => 0,
+        );
+        $result = $this->callAPI('requestConfirmation', $params);
+        $this->assertEquals('success', $result->status);
+        $this->assertEquals('OK', $result->data);
+    }
      /**
       * Test counting the total number of subscribers.
       * We should now have one more than before.
@@ -726,12 +741,47 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
         );
         
         $result = $this->callAPI('campaignAdd', $post_params);
+<<<<<<< Updated upstream
+=======
+        var_dump($result);
+>>>>>>> Stashed changes
         $this->assertEquals('success', $result->status);
         $campaignID = $result->data->id;
         $this->assertEquals($result->data->message,'快速的棕色狐狸跳过懒狗');
         return $campaignID;
     }
  
+<<<<<<< Updated upstream
+=======
+      /**
+      * 
+      * test creating a campaign with Quote characters
+      */
+           
+     function testCreateCampaignQuotes() {
+        $post_params = array(
+            'subject' => 'Test Campaign created by API '.time(),
+            'fromfield' => 'From Name apitest@phplist.com',
+            'replyto' => '',
+            'message' => 'This is a "double" and \'single\' quotes test',
+            'textmessage' => 'This is a "double" and \'single\' quotes test',
+            'footer' => 'Footer',
+            'status' => 'submitted',
+            'sendformat' => 'both',
+            'template' => 0,
+            'embargo' => date('Y-m-d'),
+            'rsstemplate' => '',
+            'owner' => 0,
+            'htmlformatted' => 1,
+        );
+        
+        $result = $this->callAPI('campaignAdd', $post_params);
+        $this->assertEquals('success', $result->status);
+        $campaignID = $result->data->id;
+        $this->assertEquals($result->data->message,'This is a "double" and \'single\' quotes test');
+        return $campaignID;
+    }
+>>>>>>> Stashed changes
   
     /**
      * update a campaign
@@ -785,7 +835,11 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
 
          $result = $this->callAPI('campaignsCount', $post_params);
          $this->assertEquals('success', $result->status);
+<<<<<<< Updated upstream
          $this->assertEquals($campaignCount+2, $result->data->total);
+=======
+         $this->assertEquals($campaignCount+3, $result->data->total);
+>>>>>>> Stashed changes
          $campaignCount = $result->data->total;
 
          return $campaignCount;
