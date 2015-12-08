@@ -237,7 +237,48 @@ class Subscribers
         } catch (\Exception $e) {
             Response::outputError($e);
         }
-    } 
+    }
+    
+    /** 
+     * Send the request for confirmation
+     * 
+     * <p><strong>Parameters:</strong><br/>
+     * [*subscriberId] {integer} the ID of the Subscriber.<br/>
+     * [*subscribePage] {integer} subscribepage to use (can be 0).<br/>
+     * </p>
+     * <p><strong>Returns:</strong><br/>
+     * "OK" if successful
+     * </p>
+     */
+     
+    public static function requestConfirmation($subscriberId = 0, $subscribePage = 0)
+    {
+       
+        $listNames = ''; // possible enhancing
+        if ($subscriberId == 0 && isset($_REQUEST['subscriberId'])) {
+            $subscriberId = sprintf('%d',$_REQUEST['subscriberId']);
+        }
+        if ($subscribePage == 0 && isset($_REQUEST['subscribepage'])) {
+            $subscribePage = sprintf('%d',$_REQUEST['subscribepage']);
+        }
+        
+        try {
+            $db = PDO::getConnection();
+            $stmt = $db->prepare('select * from '.$GLOBALS['tables']['user']. ' where id=:id;');
+            $stmt->bindParam('id', $subscriberId, PDO::PARAM_INT);
+            $stmt->execute();
+            $subscriber = $stmt->fetch(PDO::FETCH_OBJ);
+            $subscribeMessage = getUserConfig("subscribemessage:$subscribePage", $subscriberId);
+            $subscribeMessage = str_replace('[LISTS]',$listNames,$subscribeMessage);
+            sendMail($subscriber->email, getConfig("subscribesubject:$subscribePage"), $subscribeMessage, '',  '', true );
+            addUserHistory($subscriber->email, 'Request confirmation', 'Confirmation request via the Rest-API plugin');
+            $db = null;
+            Response::outputMessage("OK");
+        } catch (\Exception $e) {
+            Response::outputError($e);
+        }
+    }
+    
     /**
      * Update one Subscriber.
      * 
@@ -302,6 +343,29 @@ class Subscribers
             Response::outputDeleted('Subscriber', sprintf('%d',$_REQUEST['id']));
         } catch (\Exception $e) {
             Response::outputError($e);
+        }
+    }
+    
+    public static function getSubscriberLists($subscriberId) {
+        //try {
+            //$db = PDO::getConnection();
+        //$sql = 'SELECT * FROM '.$GLOBALS['tables']['list'].' WHERE id IN 
+          //(SELECT listid FROM '.$GLOBALS['tables']['listuser'].' WHERE userid=:subscriber_id) ORDER BY listorder;';
+        //if (!is_numeric($subscriber_id) || empty($subscriber_id)) {
+            //Response::outputErrorMessage('invalid call');
+        //}
+        try {
+            $db = PDO::getConnection();
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam('subscriber_id', $subscriber_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            $stmt = $db->prepare('select listid from '.$GLOBALS['tables']['listuser'].' where userid = :subscriberId');
+            $stmt->bindParam('subscriberId', $subscriberId, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch (\Exception $e) {
+            return array();
         }
     }
 }
