@@ -741,18 +741,11 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
         );
         
         $result = $this->callAPI('campaignAdd', $post_params);
-<<<<<<< Updated upstream
-=======
-        var_dump($result);
->>>>>>> Stashed changes
         $this->assertEquals('success', $result->status);
         $campaignID = $result->data->id;
         $this->assertEquals($result->data->message,'快速的棕色狐狸跳过懒狗');
         return $campaignID;
     }
- 
-<<<<<<< Updated upstream
-=======
       /**
       * 
       * test creating a campaign with Quote characters
@@ -781,7 +774,6 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result->data->message,'This is a "double" and \'single\' quotes test');
         return $campaignID;
     }
->>>>>>> Stashed changes
   
     /**
      * update a campaign
@@ -835,11 +827,7 @@ class TestRestapi extends \PHPUnit_Framework_TestCase
 
          $result = $this->callAPI('campaignsCount', $post_params);
          $this->assertEquals('success', $result->status);
-<<<<<<< Updated upstream
-         $this->assertEquals($campaignCount+2, $result->data->total);
-=======
          $this->assertEquals($campaignCount+3, $result->data->total);
->>>>>>> Stashed changes
          $campaignCount = $result->data->total;
 
          return $campaignCount;
